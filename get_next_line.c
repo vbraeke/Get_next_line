@@ -6,7 +6,7 @@
 /*   By: vbraeke <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/16 13:42:27 by vbraeke           #+#    #+#             */
-/*   Updated: 2016/01/18 15:55:53 by vbraeke          ###   ########.fr       */
+/*   Updated: 2016/01/18 18:21:40 by vbraeke          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,9 @@ int		check_line(char *buf)
 
 char	get_my_line(*buf)
 {
+	int		i;
+
+	i = 0;
 
 }
 
@@ -49,17 +52,19 @@ char	*ft_realloc(char *buf)
 
 int		get_next_line(int const fd, char **line)
 {
-	char		*str;
+	//char		*str;
 	static char	buf[BUFF_SIZE + 1];
 	int			ret;
 	static char	*save;
 	int			k;
 
-	if (*line != NULL)
+	if (*line != NULL || ) 
+	while (read(fd, buf, BUFF_SIZE))
 	{
-		while (read(fd, buf, BUFF_SIZE))
-		{
-			k = checkline(buf);
-			save = ft_realloc(buf);
-		}
+		k = checkline(buf);
+		if (!check_line(buf))
+			return (-1);
+		save = ft_realloc(buf);
 	}
+}:wq
+
