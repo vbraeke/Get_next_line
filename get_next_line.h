@@ -15,15 +15,9 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# include "libft.h"
-# include <fcntl.h>
+
+#include <fcntl.h>
 
 # define BUFF_SIZE 15
-
-typedef struct	line
-{
-	char	*save;
-
-}
 
 #endif
