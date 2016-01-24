@@ -6,65 +6,84 @@
 /*   By: vbraeke <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/16 13:42:27 by vbraeke           #+#    #+#             */
-/*   Updated: 2016/01/18 18:21:40 by vbraeke          ###   ########.fr       */
+/*   Updated: 2016/01/19 17:51:37 by vbraeke          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		check_line(char *buf)
-{
-	int		i;
-	while (buf[i])
-	{
-		if (buf[i] == '\n')
-			return (i);
-		i++;
-	}
-	return (0);
-}
-
-char	get_my_line(*buf)
+int		check_my_line(char *buf, char **line, char **rest)
 {
 	int		i;
 
 	i = 0;
-
+	while (buf[i])
+	{
+		if (buf[i] == '\n')
+		{
+			*rest = ft_strsub(buf, 0, i);
+			return (0);	
+		}
+		i++;
+	}
+	*rest = ft_strjoin(*line, ft_strsub(buf, 0 , BUFF_SIZE));
+	printf("check_line%s\n", *line);
+	printf("rest = %s\n", *rest);
+	return (1);
 }
 
-char	*ft_realloc(char *buf)
+void	read_my_file(char **rest, int const fd, char *buf, char **line)
 {
-	char *buf2;
-	if (buf == 0)
+	int		ret;
+
+	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
-		if ((buf2 = malloc(sizeof(char) * (BUFF_SIZE + 1))) == 0)
-			return (NULL);
+		check_my_line(buf, line, rest);
+		printf("myline%s\n", *line);
+		printf("buf =%s\n", buf);
+		//printf("ret =%d\n", ret);
+		if (ret < BUFF_SIZE)
+			printf("FINISH\n");
 	}
-	else 
-	{
-		if ((buf2 = malloc(sizeof(char) * ft_strlen(buf) + BUFF_SIZE + 1)) == 0)
-			return (NULL);
-		ft_strcpy(buf2, buf);
-		free(buf);
-	}
-	return (buf2);
 }
 
 int		get_next_line(int const fd, char **line)
 {
-	//char		*str;
-	static char	buf[BUFF_SIZE + 1];
-	int			ret;
-	static char	*save;
-	int			k;
+	char		buf[BUFF_SIZE];
+	static char	*rest;
+	int			len;
 
-	if (*line != NULL || ) 
-	while (read(fd, buf, BUFF_SIZE))
+	rest = NULL;
+	if (fd < 0 || BUFF_SIZE < 1|| !line)
+		return (-1);
+	read_my_file(&rest, fd, buf, line);
+	return (0);
+	if (check_my_line(buf, line, &rest) == 0)
+		return (1);
+
+}
+
+int 	main(int argc, char **argv)
+{
+	char *line;
+	int fd;
+	//int i = 1;
+	int ret;
+
+	line = ft_strnew(0);
+	if (argc == 2)
 	{
-		k = checkline(buf);
-		if (!check_line(buf))
-			return (-1);
-		save = ft_realloc(buf);
+		if (!(fd = open(argv[1], O_RDONLY)))
+			return (0);
 	}
-}:wq
-
+	else
+		fd = 0;
+	while ((ret = get_next_line(fd, &line)) > 0)
+	{
+		printf("line = %s\n", line);
+		//printf("ret = %d\n", ret);
+	}
+	//printf("NEXT_LINE: %s\n", line);
+	close(fd);
+	return (0);
+}

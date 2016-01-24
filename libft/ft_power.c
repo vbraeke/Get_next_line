@@ -1,24 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_power.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vbraeke <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: jmontija <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/01/16 13:37:58 by vbraeke           #+#    #+#             */
-/*   Updated: 2016/01/19 17:24:21 by vbraeke          ###   ########.fr       */
+/*   Created: 2016/01/05 16:53:12 by jmontija          #+#    #+#             */
+/*   Updated: 2016/01/05 16:53:28 by jmontija         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <stdio.h>
-#include <fcntl.h>
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+int		ft_power(int nb, int power)
+{
+	int total;
 
-# define BUFF_SIZE 15
-
-int		get_next_line(const int fd, char **line);
-
-#endif
+	total = nb;
+	if (power > 1)
+	{
+		while (power > 1)
+		{
+			total = total * nb;
+			power--;
+		}
+	}
+	else if (power == 0)
+		return (1);
+	else
+		return (0);
+	return (total);
+}
