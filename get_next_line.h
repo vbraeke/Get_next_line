@@ -17,8 +17,15 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
+<<<<<<< HEAD
 # define BUFF_SIZE 15
 
 int		get_next_line(const int fd, char **line);
+=======
+
+#include <fcntl.h>
+
+# define BUFF_SIZE 15
+>>>>>>> 60a940c483d9a437b803a47d9833d72a3ef238bd
 
 #endif
