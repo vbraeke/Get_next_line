@@ -6,7 +6,7 @@
 /*   By: vbraeke <vbraeke@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/27 21:05:25 by vbraeke           #+#    #+#             */
-/*   Updated: 2016/01/27 21:06:38 by vbraeke          ###   ########.fr       */
+/*   Updated: 2016/01/28 16:19:27 by vbraeke          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ static int			return_line(char **buf, char **buf2, char **line)
 	free(*buf);
 	*buf = tmp;
 	if (buf2)
+		printf("%s\n", *buf2);
 		free(*buf2), *buf2 = NULL;
 	return (1);
 }
@@ -91,5 +92,30 @@ int					get_next_line(int const fd, char **line)
 		free(buf2), buf2 = NULL;
 	free(buf), buf = NULL;
 	*line = NULL;
+	return (0);
+}
+
+int		main(int argc, char **argv)
+{
+	char *line;
+	int fd;
+	//int i = 1;
+	int ret;
+
+	line = ft_strnew(BUFF_SIZE);
+	if (argc == 2)
+	{
+		if (!(fd = open(argv[1], O_RDONLY)))
+			return (0);
+	}
+	else
+		fd = 0;
+	while ((ret = get_next_line(fd, &line)) > 0)
+	{
+		//printf("line = %s\n", line);
+		//printf("ret = %d\n", ret);
+	}
+	//printf("NEXT_LINE: %s\n", line);
+	close(fd);
 	return (0);
 }

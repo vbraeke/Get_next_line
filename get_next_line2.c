@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vbraeke <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: vbraeke <vbraeke@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/25 16:18:09 by vbraeke           #+#    #+#             */
-/*   Updated: 2016/01/25 16:18:13 by vbraeke          ###   ########.fr       */
+/*   Updated: 2016/01/28 16:11:37 by vbraeke          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,64 +25,82 @@ char	*ft_strnjoin(char *s1, char *s2, size_t n)
 	return (res);
 }
 
-
-void	check_my_line(int fd, char **rest, char **line)
+void	checkbuf(char *buf, char **rest)
 {
-	int i = -1;
-	while (++i < ft_strlen(*rest))
+	int		i;
+
+	i = 0;
+	while(buf[i])
 	{
-		if ((*rest)[i] && (*rest)[i] == '\n')
+		if (buf[i] == '\n')
 		{
-			*line = ft_strsub(*rest, 0, i);
-			printf("LINE%s\n", *line);
-			if (i + 1 < ft_strlen(*rest))
-				*rest = ft_strsub(*rest, i + 1, ft_strlen(*rest));
-			return ;
+			*rest = ft_strsub(buf, 0, i);
+			printf("%s\n", *rest);
+
 		}
+		i++;
 	}
-	printf("LINE%s\n", *line);
-	*line = ft_strdup(*rest);
-	ft_strdel(rest);
-	get_next_line(fd, line);
 }
 
-int		get_next_line(int const fd, char **line)
+void		checkrest(char **rest, char **line)
 {
-	char		buf[BUFF_SIZE + 1];
-	static char	*rest;
-	static int		i;
-	char		*buf2;
-	int 		ret;
+	int		i;
+	char *tmp;
 
-	rest = NULL;
-	if (fd < 0 || BUFF_SIZE < 1|| !line)
-		return (-1);
-	while ((ret = read(fd, buf, BUFF_SIZE)))
+	i = 0;
+	while ((*rest)[i])
 	{
-		check_my_line(fd, &rest, line);
-		printf("I = %d\n", i);
-		if (i == BUFF_SIZE)
+		if ((*rest)[i] == '\n')
 		{
-			buf2 = ft_strsub(buf, 0, i);
-			printf("buf2%s\n", buf2);
+			*line = ft_strnjoin(*line, *rest, i);
+			tmp = ft_strsub(*rest, i + 1, ft_strlen(*rest - i));
+			ft_strdel(rest);
+			*rest = ft_strdup(tmp);
+			printf("rest = %s\n", *line);
+			free(tmp);
+			tmp = NULL;
+			return;
 		}
-		if (i != BUFF_SIZE)
+		i++;
+	}
+}
+
+int	readfile(char *buf, char **rest, char **line, const int fd)
+{
+	int	ret;
+
+	while((ret = read(fd, buf, BUFF_SIZE)))
+	{	
+		/*if (*rest != NULL)
 		{
-			*line = ft_strnjoin(buf2, buf, i);
-			rest = ft_strsub(buf, i, BUFF_SIZE);
-			printf("rest%s\n", rest);
-			printf("line%s\n", *line);
-		}
-		if (ret < BUFF_SIZE)
+			printf("first\n");
+			checkrest(rest, line);
+		}*/
+		checkbuf(buf, rest);
+		if (ret == 0)
 		{
-			printf("File end\n");
+			printf("FINISH\n");
 			return (0);
-		}	
+		}
 	}
 	return (1);
 }
 
-int		main(int argc, char **argv)
+int		get_next_line(int const fd, char **line)
+{
+	int		i;
+	char	buf[BUFF_SIZE + 1];
+	static char	*rest = NULL;
+
+	if (BUFF_SIZE < 1 || !line || !*line || fd < 0)
+		return (-1);
+	readfile(buf, &rest, line, fd);
+	if ((readfile(buf, &rest, line, fd)) == 0)
+		return (0);
+	return (1);
+}
+
+/*int		main(int argc, char **argv)
 {
 	char *line;
 	int fd;
@@ -105,4 +123,4 @@ int		main(int argc, char **argv)
 	//printf("NEXT_LINE: %s\n", line);
 	close(fd);
 	return (0);
-}
+}*/
