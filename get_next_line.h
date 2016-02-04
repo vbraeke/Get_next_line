@@ -6,7 +6,7 @@
 /*   By: vbraeke <vbraeke@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/01/16 13:37:58 by vbraeke           #+#    #+#             */
-/*   Updated: 2016/01/28 19:15:06 by vbraeke          ###   ########.fr       */
+/*   Updated: 2016/02/04 01:52:30 by vbraeke          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-
-# define	BUFF_SIZE 999
+# define	BUFF_SIZE 80
 
 int			get_next_line(const int fd, char **line);
 

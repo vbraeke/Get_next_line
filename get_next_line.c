@@ -1,105 +1,80 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   gnl.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vbraeke <vbraeke@student.42.fr>            +#+  +:+       +#+        */
+/*   By: vbraeke <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/01/27 21:05:25 by vbraeke           #+#    #+#             */
-/*   Updated: 2016/01/28 16:19:27 by vbraeke          ###   ########.fr       */
+/*   Created: 2016/02/03 00:58:09 by vbraeke           #+#    #+#             */
+/*   Updated: 2016/02/03 00:58:12 by vbraeke          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static unsigned int	check_line(char *buf)
+void	ft_realloc_rest(char **rest, size_t i)
 {
-	unsigned int i;
+	char *tmp;
+	tmp = ft_strdup(*rest + i + 1);
+	ft_strdel(rest);
+	*rest = ft_strdup(tmp);
+}
 
+void	ft_realloc_line(char **line, char **rest, int i)
+{
+	char *tmp;
+
+	tmp = ft_strsub(*rest, 0, i);
+	*line = ft_strdup(tmp);
+	free(tmp);
+}
+
+void	ft_save(char *buf, char **rest)
+{
+	char *tmp;
+
+	if (*rest == NULL)
+		*rest = ft_strdup(buf);
+	else
+	{
+		tmp = ft_strdup(*rest);
+		ft_strdel(rest);
+		*rest = ft_strjoin(tmp, buf);
+	}
+}
+
+int		get_next_line(int const fd, char **line)
+{
+	int ret;
+	int i;
+	char buf[BUFF_SIZE + 1];
+	static char *rest;
+
+	if (fd < 0 || line == NULL)
+		return (-1);
+	while ((ret = read(fd, buf, BUFF_SIZE)))
+	{
+		if (ret < 0)
+			return (-1);
+		buf[ret] = '\0';
+		ft_save(buf, &rest);
+	}
+	if (rest[0] == '\0')
+		return (0);
 	i = 0;
-	while (buf[i] != '\0')
-	{
-		if (buf[i] == '\n')
-		{
-			buf[i] = '\0';
-			return (i + 1);
-		}
+	while (rest[i] && rest[i] != '\n')
 		i++;
-	}
-	return (i);
-}
-
-static void			join_buf(char **buf2, char **buf)
-{
-	char	*tmp;
-	char	*tmp2;
-
-	tmp = NULL;
-	tmp2 = NULL;
-	if (*buf2 && **buf2)
-	{
-		tmp2 = ft_strdup(*buf2);
-		if (*buf)
-		{
-			tmp = ft_strdup(*buf);
-			free(*buf);
-		}
-		*buf = ft_strjoin(tmp, tmp2);
-		if (tmp)
-			free(tmp);
-		if (tmp2)
-			free(tmp2);
-	}
-}
-
-static int			return_line(char **buf, char **buf2, char **line)
-{
-	unsigned int	i;
-	char			*tmp;
-
-	tmp = NULL;
-	i = check_line(*buf);
-	*line = ft_strdup(*buf);
-	tmp = ft_strdup(*buf + i);
-	free(*buf);
-	*buf = tmp;
-	if (buf2)
-		printf("%s\n", *buf2);
-		free(*buf2), *buf2 = NULL;
+	ft_realloc_line(line, &rest, i);
+	ft_realloc_rest(&rest, i);
+	if (rest[i] == '\n' && ((rest[i + 1]) == '\0'))
+		return(0);
 	return (1);
 }
 
-int					get_next_line(int const fd, char **line)
-{
-	int				f;
-	char			*buf2;
-	static char		*buf = NULL;
-
-	buf2 = NULL;
-	if (fd <= 0 || (!(line)) || BUFF_SIZE < 1)
-		return (-1);
-	if ((!(buf2 = (char*)malloc(sizeof(char) * BUFF_SIZE + 1))))
-		return (-1);
-	while (((f = read(fd, buf2, BUFF_SIZE)) > 0) && (!(ft_strchr(buf2, '\n'))))
-		buf2[f] = '\0', join_buf(&buf2, &buf);
-	if (buf2 && *buf2 && f > 0)
-		buf2[f] = '\0', join_buf(&buf2, &buf);
-	if (f < 0)
-		return (-1);
-	if (buf && buf[0] != '\0')
-		return (return_line(&buf, &buf2, line));
-	if (buf2)
-		free(buf2), buf2 = NULL;
-	free(buf), buf = NULL;
-	*line = NULL;
-	return (0);
-}
-
-int		main(int argc, char **argv)
+/*int		main(int argc, char **argv)
 {
 	char *line;
 	int fd;
-	//int i = 1;
 	int ret;
 
 	line = ft_strnew(BUFF_SIZE);
@@ -108,14 +83,12 @@ int		main(int argc, char **argv)
 		if (!(fd = open(argv[1], O_RDONLY)))
 			return (0);
 	}
-	else
-		fd = 0;
+	
 	while ((ret = get_next_line(fd, &line)) > 0)
 	{
-		//printf("line = %s\n", line);
-		//printf("ret = %d\n", ret);
+		printf("line = %s\n", line);
 	}
-	//printf("NEXT_LINE: %s\n", line);
+	
 	close(fd);
 	return (0);
-}
+}*/
